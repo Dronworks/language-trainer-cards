@@ -5,6 +5,16 @@ your own markdown notes — one note per word — into a study deck with mastery
 tracking, and works in both directions: forward (word → translation) and
 reverse (translation → word), with independent progress for each.
 
+## Screenshots
+
+| Card front | Card flipped (answer + example) |
+| --- | --- |
+| ![Card front](screenshots/card-forward.png) | ![Card flipped](screenshots/card-answer.png) |
+
+| Vocabulary folder in the vault | A word note |
+| --- | --- |
+| ![Vocabulary folder](screenshots/vault-structure.png) | ![Word note](screenshots/word-note.png) |
+
 ## Features
 
 - Flashcard-style learning interface
@@ -31,6 +41,19 @@ reverse (translation → word), with independent progress for each.
 The plugin reads every markdown file in the configured folder as one word.
 Files and folders whose names start with `_` are ignored, so you can keep
 indexes and reference notes next to the words (e.g. `Italian/_meta/Index.md`).
+
+### Optional: organizing with a `_meta` folder
+
+A useful convention is a `_meta` folder inside the vocabulary folder:
+
+- **`Inbox.md`** — a running dump of new words and phrases you encounter. When
+  you have time, turn them into word pages (via the **Add vocabulary word**
+  command, the template, or the add-word skill), then clear the processed items.
+- **`Index.md`** — a generated list of all words for browsing and review. It
+  lives under `_meta`, so it never becomes a flashcard.
+- **`Pronunciation.md`** — your language's pronunciation rules (IPA and
+  respelling conventions). Word pages can link to its sections, so each rule is
+  explained once, in one place.
 
 ## Creating words
 
