@@ -44,6 +44,8 @@ page layout and linking conventions.
 
 The plugin reads these blocks from a note:
 
+A full word note looks like this (German `Haus.md`):
+
 ```markdown
 ### house / home          ← translation (first ### line)
 #noun                     ← part-of-speech tag (optional)
@@ -58,9 +60,20 @@ The plugin reads these blocks from a note:
 > *The house is big.*
 
 
+> [!abstract]- Forms      ← optional, inflections table
+
+
+> [!quote] Phrases        ← optional, links to phrase notes
+
+
 > [!tip] Synonyms
 > [[Heim]] · [[Zuhause]]
+
+
+> [!note] Notes           ← optional, grammar and usage bullets
 ```
+
+What the card reads from it:
 
 - **File name** (minus `.md`) → the word on the card.
 - **`### ` line** → the translation shown on the back. Required for reverse mode.
@@ -71,8 +84,8 @@ The plugin reads these blocks from a note:
   reverse mode, where they act as alternative answers).
 - **First `#tag` line** → part of speech hint (optional).
 
-Anything else in the note — tables, extra notes, links — is ignored, so keep
-whatever you like in your word files.
+Everything else — Forms tables, Phrases links, Notes, any free text — is for
+you; the card ignores it, so keep whatever you like in your word files.
 
 ## Usage
 
