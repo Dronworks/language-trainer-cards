@@ -38,6 +38,10 @@ Each word is a markdown note. Use the **Add vocabulary word** command to fill a
 form and create the note, or write the file by hand (see
 [`templates/word-template.md`](templates/word-template.md)).
 
+If you use an AI agent to manage your notes, the repo also ships an
+[add-word skill](.claude/skills/add-word/SKILL.md) that teaches the agent the
+page layout and linking conventions.
+
 The plugin reads these blocks from a note:
 
 ```markdown
