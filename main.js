@@ -4,7 +4,7 @@ const DEFAULT_SETTINGS = {
 	folder: 'Italian',
 	wordsPerSession: 20,     // renamed from dailyWordLimit
 	trainingMode: 'new',     // 'new' | 'review' | 'mastered' | 'all' | 'archived'
-	direction: 'forward',    // 'forward' (foreign→English) | 'reverse' (English→foreign)
+	direction: 'forward',    // 'forward' (word→translation) | 'reverse' (translation→word)
 	showPronunciation: true,
 	showExamples: true,
 	session: null            // { set: [wordId...], index: number, mode: string, direction: string }
@@ -25,7 +25,7 @@ module.exports = class LanguageTrainerPlugin extends Plugin {
 		// (same settings for both modes, but grading is tracked separately)
 		this.addCommand({
 			id: 'open-language-trainer',
-			name: 'Open trainer — forward (IT → EN)',
+			name: 'Open trainer — forward (word → translation)',
 			callback: () => {
 				this.openTrainer('forward');
 			}
@@ -33,9 +33,18 @@ module.exports = class LanguageTrainerPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'open-language-trainer-reverse',
-			name: 'Open trainer — reverse (EN → IT)',
+			name: 'Open trainer — reverse (translation → word)',
 			callback: () => {
 				this.openTrainer('reverse');
+			}
+		});
+
+		// Command to scaffold a new vocabulary word note in the configured folder
+		this.addCommand({
+			id: 'add-vocabulary-word',
+			name: 'Add vocabulary word',
+			callback: () => {
+				new AddWordModal(this).open();
 			}
 		});
 
@@ -131,7 +140,7 @@ module.exports = class LanguageTrainerPlugin extends Plugin {
 		// Extract example:
 		// > [!example] Example
 		// > **Foreign language sentence.**
-		// > *English translation.*
+		// > *Native-language translation.*
 		const exampleMatch = content.match(/\[!example\][-+]?\s+Example\s*[\s\S]*?>\s*\*\*(.+?)\*\*\s*[\s\S]*?>\s*\*(.+?)\*/);
 		const example = exampleMatch ? {
 			foreign: exampleMatch[1].trim(),
@@ -338,7 +347,7 @@ class LanguageTrainerModal extends Modal {
 		const isForward = this.direction() === 'forward';
 		const btn = this.contentEl.createEl('button', {
 			cls: 'direction-toggle',
-			text: `⇄ ${isForward ? 'IT → EN' : 'EN → IT'}`
+			text: `⇄ ${isForward ? 'word → translation' : 'translation → word'}`
 		});
 		btn.title = 'Switch direction (R)';
 		btn.addEventListener('click', () => this.switchDirection());
@@ -501,7 +510,7 @@ class LanguageTrainerModal extends Modal {
 			if (mode === 'archived') return archived;
 			// Archived words are excluded from every other pool
 			if (archived) return false;
-			// Reverse mode needs an English prompt to show
+			// Reverse mode needs a translation prompt to show
 			if (dir === 'reverse' && !w.translation) return false;
 			const level = this.plugin.getWordProgress(w.id, dir).masteryLevel;
 			if (mode === 'new') return level < 3;
@@ -646,7 +655,7 @@ class LanguageTrainerModal extends Modal {
 		}
 
 		// Main prompt display (click to flip):
-		// forward shows the foreign word, reverse shows the English translation
+		// forward shows the foreign word, reverse shows the translation
 		// Archived mode always prompts with the foreign word (direction-agnostic)
 		const isForward = mode === 'archived' ? true : dir === 'forward';
 		const wordDiv = this.contentEl.createDiv({ cls: 'language-word' });
@@ -701,9 +710,9 @@ class LanguageTrainerModal extends Modal {
 			exampleDiv.createSpan({ text: word.example.english, cls: 'example-english' });
 		}
 
-		// Synonyms are other foreign words, so they only make sense in reverse
-		// mode (EN → IT) where the foreign word is the answer — an alternative
-		// answer set. They live on the answer side, revealed on flip.
+	// Synonyms are other foreign words, so they only make sense in reverse
+	// mode (translation → word) where the foreign word is the answer — an
+	// alternative answer set. They live on the answer side, revealed on flip.
 		if (!isForward && word.synonyms && word.synonyms.length > 0) {
 			const synDiv = this.answerDiv.createDiv({ cls: 'synonyms' });
 			synDiv.createSpan({ text: 'Synonyms: ' });
@@ -880,6 +889,118 @@ class LanguageTrainerModal extends Modal {
 		const buttonContainer = this.contentEl.createDiv({ cls: 'button-container' });
 		const closeBtn = buttonContainer.createEl('button', { text: 'Close', cls: 'next-button' });
 		closeBtn.addEventListener('click', () => this.close());
+	}
+}
+
+class AddWordModal extends Modal {
+	constructor(plugin) {
+		super(plugin.app);
+		this.plugin = plugin;
+		this.fields = {
+			word: '',
+			translation: '',
+			pos: '',
+			ipa: '',
+			respelling: '',
+			exampleForeign: '',
+			exampleEnglish: '',
+			synonyms: ''
+		};
+	}
+
+	onOpen() {
+		const { contentEl } = this;
+		contentEl.createEl('h2', { text: 'Add vocabulary word' });
+
+		const addField = (label, key, placeholder = '') => {
+			new Setting(contentEl)
+				.setName(label)
+				.addText(text => text
+					.setPlaceholder(placeholder)
+					.onChange(value => { this.fields[key] = value.trim(); }));
+		};
+
+		addField('Word', 'word', 'word or phrase in the studied language (file name)');
+		addField('Translation', 'translation', 'meaning in your language');
+		addField('Part of speech', 'pos', 'verb, noun, … (optional)');
+		addField('Pronunciation IPA', 'ipa', 'e.g. ˈnɔt.te (optional, needs respelling too)');
+		addField('Pronunciation respelling', 'respelling', 'e.g. NOT-te (optional, needs IPA too)');
+		addField('Example sentence', 'exampleForeign', 'in the studied language (optional)');
+		addField('Example translation', 'exampleEnglish', 'in your language (optional)');
+		addField('Synonyms', 'synonyms', 'comma-separated, in the studied language (optional)');
+
+		new Setting(contentEl)
+			.addButton(btn => btn
+				.setButtonText('Create word')
+				.setCta()
+				.onClick(async () => {
+					try {
+						const err = await this.create();
+						if (err) new Notice(err);
+					} catch (e) {
+						new Notice(`Could not create the word: ${e.message}`);
+					}
+				}));
+	}
+
+	sanitizeFilename(name) {
+		// Strip characters Obsidian/file systems reject in file names
+		return name.replace(/[\\\/:*?"<>|]/g, '-').trim();
+	}
+
+	async create() {
+		const f = this.fields;
+		if (!f.word) return 'Word is required';
+		if (!f.translation) return 'Translation is required';
+
+		const folder = (this.plugin.settings.folder || 'Italian').replace(/^\/+|\/+$/g, '');
+		const filename = this.sanitizeFilename(f.word);
+		if (!filename) return 'The word has no usable file-name characters';
+
+		if (!this.app.vault.getAbstractFileByPath(folder)) {
+			await this.app.vault.createFolder(folder);
+		}
+
+		const path = `${folder}/${filename}.md`;
+		if (this.app.vault.getAbstractFileByPath(path)) {
+			return `File already exists: ${path}`;
+		}
+
+		await this.app.vault.create(path, this.buildContent());
+		this.plugin.vocabulary = await this.plugin.loadVocabulary();
+		new Notice(`Added "${filename}" (${this.plugin.vocabulary.length} words in "${folder}")`);
+		this.close();
+		return null;
+	}
+
+	buildContent() {
+		const f = this.fields;
+		const blocks = [];
+
+		let head = `### ${f.translation}`;
+		if (f.pos) head += `\n#${f.pos.replace(/^#/, '')}`;
+		blocks.push(head);
+
+		// The parser needs both halves of the pronunciation line (/IPA/ · Respelling),
+		// so the block goes in only when both were provided
+		if (f.ipa && f.respelling) {
+			blocks.push(`> [!info] Pronunciation\n> /${f.ipa}/ · ${f.respelling}`);
+		}
+
+		if (f.exampleForeign && f.exampleEnglish) {
+			blocks.push(`> [!example] Example\n> **${f.exampleForeign}**\n> *${f.exampleEnglish}*`);
+		}
+
+		const synonyms = f.synonyms.split(',').map(s => s.trim()).filter(Boolean);
+		if (synonyms.length > 0) {
+			blocks.push(`> [!tip] Synonyms\n> ${synonyms.map(s => `[[${s}]]`).join(' · ')}`);
+		}
+
+		return blocks.join('\n\n\n') + '\n';
+	}
+
+	onClose() {
+		this.contentEl.empty();
 	}
 }
 

@@ -9,7 +9,7 @@ See `README.md` for the user-facing description; this file summarizes how the cu
 1. **Cross-platform**: works on desktop and Android (`isDesktopOnly: false`).
 2. **Configurable vocabulary folder**: default `Italian`, changeable in settings.
 3. **Vault-based progress storage**: `language-trainer-progress.json` in the vault root.
-4. **Two directions with independent progress**: forward (IT → EN, recognition) and reverse (EN → IT, recall).
+4. **Two directions with independent progress**: forward (word → translation, recognition) and reverse (translation → word, recall).
 5. **Mastery tracking**: six levels (0–5★), with New (0–2★), Learning (3–4★), and Mastered (5★+) pools.
 6. **Per-mode buttons**: the grade buttons adapt to the pool being studied (see below).
 7. **Archive**: mastered words can be archived (hidden from every pool) and reviewed/released via a dedicated Archived mode.
@@ -71,7 +71,7 @@ Pronunciation and part of speech travel with the foreign word: on the card front
 
 ## Commands and shortcuts
 
-- Commands: "Open trainer — forward (IT → EN)", "Open trainer — reverse (EN → IT)", "Reload vocabulary".
+- Commands: "Open trainer — forward (word → translation)", "Open trainer — reverse (translation → word)", "Add vocabulary word" (scaffolds a word note in the vocabulary folder), "Reload vocabulary".
 - Ribbon icon: `graduation-cap`.
 - Keyboard: Space/Enter flip, 1–4 map to the buttons shown in the current mode, K = Know and D = Don't know only where those buttons exist, R = switch direction (disabled in Archived mode), N = new set (completion screen only).
 
