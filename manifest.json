@@ -1,9 +1,9 @@
 {
   "id": "language-trainer-cards",
   "name": "Language Trainer Cards",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "0.15.0",
-  "description": "Train vocabulary with flashcards and mastery tracking, using markdown notes in a configurable folder",
+  "description": "Train vocabulary with flashcards and mastery tracking, using markdown notes in a configurable folder.",
   "author": "Andrey Dobrikov",
   "authorUrl": "https://github.com/Dronworks",
   "isDesktopOnly": false
