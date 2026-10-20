@@ -67,33 +67,38 @@ page layout and linking conventions.
 
 The plugin reads these blocks from a note:
 
-A full word note looks like this (German `Haus.md`):
+The full template ([`templates/word-template.md`](templates/word-template.md)):
 
 ```markdown
-### house / home          ← translation (first ### line)
-#noun                     ← part-of-speech tag (optional)
+### <translation in your language>
+#<part of speech: verb, noun, adjective, adverb, pronoun, …>
 
 
 > [!info] Pronunciation
-> /haʊs/ · HAUS
+> /<IPA>/ · <RE-spel-ling>
 
 
 > [!example] Example
-> **Das Haus ist groß.**
-> *The house is big.*
+> **<Sentence in the studied language.>**
+> *<Sentence in your language.>*
 
 
-> [!abstract]- Forms      ← optional, inflections table
+> [!abstract]- Forms
+> |  | <form 1> | <form 2> | <form 3> |
+> | --- | --- | --- | --- |
+> | <person/number/gender> |  |  |  |
 
 
-> [!quote] Phrases        ← optional, links to phrase notes
+> [!quote] Phrases
+> [[<phrase containing this word>]]
 
 
 > [!tip] Synonyms
-> [[Heim]] · [[Zuhause]]
+> [[<word>]] · [[<word>]]
 
 
-> [!note] Notes           ← optional, grammar and usage bullets
+> [!note] Notes
+> - <grammar, irregularities, usage notes>
 ```
 
 What the card reads from it:
@@ -105,7 +110,8 @@ What the card reads from it:
   translation (optional; fold markers like `[!example]-` are fine).
 - **Synonyms** callout → `[[wiki links]]` joined with ` · ` (optional; shown in
   reverse mode, where they act as alternative answers).
-- **First `#tag` line** → part of speech hint (optional).
+- **First `#tag` line** → part of speech hint (replace the `#<part of speech…>`
+  placeholder with a real tag like `#verb` or `#noun`).
 
 Everything else — Forms tables, Phrases links, Notes, any free text — is for
 you; the card ignores it, so keep whatever you like in your word files.

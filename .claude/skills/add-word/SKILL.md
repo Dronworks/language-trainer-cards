@@ -51,6 +51,14 @@ Copy `templates/word-template.md` and fill it in. Order:
 > [!note] Notes             ← optional, "- " bullets: grammar, irregularities, usage
 ```
 
+Rules:
+- **Replace `#<part of speech>`** with one real tag from:
+  `#verb #noun #adjective #adverb #pronoun #conjunction #preposition #article #number #expression`
+  (phrase pages always `#expression`). Never leave the placeholder in — the
+  parser matches `#(\w+)`, so `#<part of speech>` silently becomes `unknown`.
+- **Empty callouts** — leave them out (except Pronunciation and Example, which
+  are always present).
+
 ## 3. What the plugin parses (keep exact)
 
 - **File name** → the word on the card.
