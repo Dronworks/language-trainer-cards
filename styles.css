@@ -1,0 +1,246 @@
+/* ============================================================
+   Language Trainer Cards — styles
+   All rules are scoped under .language-trainer-modal so the
+   Obsidian theme cannot override them.
+   ============================================================ */
+
+.language-trainer-modal {
+	width: 420px;
+	max-width: 94vw;
+	padding: 20px;
+}
+
+.language-trainer-modal .modal-title {
+	font-size: 1.2em;
+	font-weight: 600;
+	margin-bottom: 6px;
+	color: var(--text-normal);
+	text-align: center;
+}
+
+.language-trainer-modal .progress-text {
+	font-size: 0.85em;
+	color: var(--text-muted);
+	margin-bottom: 12px;
+	text-align: center;
+}
+
+/* ---------- Mastery dots ---------- */
+.language-trainer-modal .mastery-dots {
+	text-align: center;
+	font-size: 0.9em;
+	color: var(--text-accent);
+	letter-spacing: 3px;
+	margin-bottom: 14px;
+}
+
+/* ---------- The word card ---------- */
+.language-trainer-modal .language-word {
+	font-size: 3em;
+	font-weight: bold;
+	text-align: center;
+	padding: 24px 16px;
+	border: 2px dashed var(--text-muted);
+	border-radius: 10px;
+	cursor: pointer;
+	user-select: none;
+	margin-bottom: 18px;
+	transition: all 0.2s ease;
+	line-height: 1.2;
+}
+
+.language-trainer-modal .language-word:hover {
+	border-color: var(--text-normal);
+	background-color: var(--background-modifier-hover);
+}
+
+.language-trainer-modal .language-word .tap-hint {
+	font-size: 0.85rem;
+	font-weight: normal;
+	color: var(--text-faint);
+	margin-top: 10px;
+	letter-spacing: 0.5px;
+}
+
+/* Pronunciation on the card front (word side) — a small hint under the big
+   word, so it reads as guidance rather than competing with the word itself */
+.language-trainer-modal .language-word .front-pronunciation {
+	font-size: 0.85rem;
+	font-weight: normal;
+	color: var(--text-faint);
+	margin-top: 10px;
+	margin-bottom: 0;
+	letter-spacing: 0.5px;
+}
+
+/* Part of speech — small muted label; a block under the word on the front,
+   an inline span next to the answer word in reverse mode */
+.language-trainer-modal .pos-tag {
+	font-size: 0.85rem;
+	font-weight: normal;
+	font-style: italic;
+	color: var(--text-faint);
+	letter-spacing: 0.5px;
+}
+
+.language-trainer-modal .language-word .pos-tag {
+	margin-top: 4px;
+}
+
+/* ---------- Answer area ---------- */
+.language-trainer-modal .answer-container {
+	margin-bottom: 18px;
+	text-align: center;
+}
+
+.language-trainer-modal .translation {
+	font-size: 1.7em;
+	font-weight: 500;
+	margin-bottom: 10px;
+	color: var(--text-normal);
+}
+
+.language-trainer-modal .pronunciation {
+	font-size: 0.95em;
+	color: var(--text-muted);
+	margin-bottom: 10px;
+}
+
+.language-trainer-modal .example {
+	font-size: 1.1em;
+	margin-bottom: 4px;
+	padding: 12px;
+	background-color: var(--background-modifier-border);
+	border-radius: 8px;
+}
+
+.language-trainer-modal .example-foreign {
+	font-weight: 500;
+}
+
+.language-trainer-modal .example-english {
+	font-style: italic;
+	opacity: 0.8;
+}
+
+.language-trainer-modal .synonyms {
+	font-size: 0.95em;
+	color: var(--text-muted);
+	margin-bottom: 10px;
+}
+
+.language-trainer-modal .synonyms .synonyms-list {
+	color: var(--text-accent);
+}
+
+/* ---------- Buttons ---------- */
+.language-trainer-modal .button-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.language-trainer-modal .button-container button {
+	padding: 12px 10px;
+	font-size: 1em;
+	font-weight: 600;
+	border-radius: 6px;
+	border: none;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	color: white;
+}
+
+.language-trainer-modal .button-container button:hover {
+	opacity: 0.9;
+	transform: translateY(-1px);
+}
+
+.language-trainer-modal button.dont-know-button {
+	background-color: var(--text-error, #d83931);
+}
+
+.language-trainer-modal button.kindof-button {
+	background-color: #e08b2f;
+}
+
+.language-trainer-modal button.know-button {
+	background-color: var(--text-success, #43a047);
+}
+
+.language-trainer-modal button.tooeasy-button {
+	background-color: #c9a227;
+}
+
+.language-trainer-modal button.next-button {
+	background-color: var(--text-accent, #7b6cd9);
+}
+
+/* ---------- Back / undo button (secondary action, full width) ---------- */
+.language-trainer-modal button.back-button {
+	grid-column: 1 / -1;
+	background-color: var(--background-secondary);
+	color: var(--text-normal);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.language-trainer-modal button.back-button:hover {
+	background-color: var(--background-modifier-hover);
+}
+
+/* ---------- Direction toggle (forward ⇄ reverse) ---------- */
+.language-trainer-modal .direction-toggle {
+	display: block;
+	margin: 0 auto 12px auto;
+	padding: 5px 14px;
+	font-size: 0.8em;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	border-radius: 999px;
+	border: 1px solid var(--background-modifier-border);
+	background-color: var(--background-secondary);
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.language-trainer-modal .direction-toggle:hover {
+	color: var(--text-normal);
+	border-color: var(--text-muted);
+}
+
+/* ---------- Desktop: 4 buttons in one row ---------- */
+@media (min-width: 481px) {
+	.language-trainer-modal .button-container {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+}
+
+/* ---------- Phone optimizations ---------- */
+@media (max-width: 480px) {
+	.language-trainer-modal {
+		padding: 14px;
+		max-width: 96vw;
+	}
+
+	.language-trainer-modal .language-word {
+		font-size: 2.4em;
+		padding: 18px 12px;
+		margin-bottom: 14px;
+	}
+
+	.language-trainer-modal .translation {
+		font-size: 1.4em;
+	}
+
+	.language-trainer-modal .example {
+		font-size: 1em;
+		padding: 10px;
+	}
+
+	.language-trainer-modal .button-container button {
+		padding: 14px 8px;
+		font-size: 1.05em;
+	}
+}
