@@ -1,5 +1,5 @@
 ### <translation in your language>
-#verb
+#<part of speech: verb, noun, adjective, adverb, pronoun, …>
 
 
 > [!info] Pronunciation
