@@ -1,4 +1,4 @@
-const { Plugin, Modal, Setting, Notice, PluginSettingTab } = require('obsidian');
+const { Plugin, Modal, Setting, Notice, PluginSettingTab, TFile, TFolder } = require('obsidian');
 
 const DEFAULT_SETTINGS = {
 	folder: 'Italian',
@@ -59,6 +59,7 @@ module.exports = class LanguageTrainerPlugin extends Plugin {
 			name: 'Reload vocabulary',
 			callback: async () => {
 				this.vocabulary = await this.loadVocabulary();
+				this.vocabularyLoaded = true;
 				new Notice(`Language Trainer: ${this.vocabulary.length} words loaded from "${this.settings.folder}"`);
 			}
 		});
@@ -66,11 +67,18 @@ module.exports = class LanguageTrainerPlugin extends Plugin {
 		// Settings tab
 		this.addSettingTab(new LanguageTrainerSettingTab(this.app, this));
 
-		// Load vocabulary and progress
-		this.vocabulary = await this.loadVocabulary();
+		// Vocabulary loads lazily on first trainer open — reading every word
+		// file at startup makes Obsidian slow to launch on large folders
+		this.vocabulary = [];
+		this.vocabularyLoaded = false;
 		this.progress = await this.loadProgress();
+	}
 
-		new Notice(`Language Trainer Cards loaded: ${this.vocabulary.length} words`);
+	async ensureVocabularyLoaded() {
+		if (!this.vocabularyLoaded) {
+			this.vocabulary = await this.loadVocabulary();
+			this.vocabularyLoaded = true;
+		}
 	}
 
 	onunload() {
@@ -94,13 +102,21 @@ module.exports = class LanguageTrainerPlugin extends Plugin {
 	async loadVocabulary() {
 		const vocabulary = [];
 		const folder = (this.settings.folder || 'Italian').replace(/^\/+|\/+$/g, '');
-		const files = this.app.vault.getMarkdownFiles()
-			.filter(file => file.path.startsWith(folder + '/') && file.path.endsWith('.md'))
-			// Skip reference files/folders reserved with a leading underscore, relative to
-			// the vocabulary folder (e.g. Italian/_meta/Index.md). Checking only the folder
-			// -relative path means a "_" segment above the vocabulary folder (e.g. "_lang/Italian")
-			// does not blank out the deck.
-			.filter(file => !file.path.slice(folder.length + 1).split('/').some(segment => segment.startsWith('_')));
+		// Walk only the vocabulary folder's tree (not the whole vault).
+		// Files and folders whose names start with "_" are skipped, so
+		// reference notes (e.g. Italian/_meta/Index.md) never become cards.
+		const files = [];
+		const root = this.app.vault.getAbstractFileByPath(folder);
+		const walk = (f) => {
+			for (const child of f.children) {
+				if (child instanceof TFolder) {
+					if (!child.name.startsWith('_')) walk(child);
+				} else if (child instanceof TFile && child.extension === 'md' && !child.name.startsWith('_')) {
+					files.push(child);
+				}
+			}
+		};
+		if (root instanceof TFolder) walk(root);
 
 		for (const file of files) {
 			try {
@@ -115,7 +131,7 @@ module.exports = class LanguageTrainerPlugin extends Plugin {
 		}
 
 		if (vocabulary.length === 0) {
-			new Notice(`Language Trainer: no words found in folder "${folder}" (vault has ${this.app.vault.getMarkdownFiles().length} markdown files). Check the folder setting.`);
+			new Notice(`Language Trainer: no words found in folder "${folder}". Check the folder setting.`);
 		}
 
 		return vocabulary;
@@ -316,9 +332,7 @@ class LanguageTrainerModal extends Modal {
 	async onOpen() {
 		this.contentEl.addClass('language-trainer-modal');
 
-		if (this.plugin.vocabulary.length === 0) {
-			this.plugin.vocabulary = await this.plugin.loadVocabulary();
-		}
+		await this.plugin.ensureVocabularyLoaded();
 
 		if (!this.tryResumeSession()) {
 			this.generateNewSet();
@@ -968,6 +982,7 @@ class AddWordModal extends Modal {
 
 		await this.app.vault.create(path, this.buildContent());
 		this.plugin.vocabulary = await this.plugin.loadVocabulary();
+		this.plugin.vocabularyLoaded = true;
 		new Notice(`Added "${filename}" (${this.plugin.vocabulary.length} words in "${folder}")`);
 		this.close();
 		return null;
@@ -1028,6 +1043,7 @@ class LanguageTrainerSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					// Reload vocabulary with the new folder
 					this.plugin.vocabulary = await this.plugin.loadVocabulary();
+					this.plugin.vocabularyLoaded = true;
 					new Notice(`Language Trainer: ${this.plugin.vocabulary.length} words loaded from "${this.plugin.settings.folder}"`);
 				}));
 

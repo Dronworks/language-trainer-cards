@@ -46,14 +46,23 @@ indexes and reference notes next to the words (e.g. `Italian/_meta/Index.md`).
 
 A useful convention is a `_meta` folder inside the vocabulary folder:
 
-- **`Inbox.md`** — a running dump of new words and phrases you encounter. When
-  you have time, turn them into word pages (via the **Add vocabulary word**
-  command, the template, or the add-word skill), then clear the processed items.
+- **`Inbox.md`** — a running dump of new words and phrases you encounter.
 - **`Index.md`** — a generated list of all words for browsing and review. It
   lives under `_meta`, so it never becomes a flashcard.
 - **`Pronunciation.md`** — your language's pronunciation rules (IPA and
   respelling conventions). Word pages can link to its sections, so each rule is
   explained once, in one place.
+
+### A typical workflow with the Inbox
+
+While reading or listening, dump **everything** new into `Inbox.md` as quick
+bullets — words, phrases, even grammar questions. Later, ask your AI agent to
+"process the inbox": with the [add-word skill](.claude/skills/add-word/SKILL.md)
+installed, the agent turns each item into a properly formatted word page (new
+words get pages, phrases with their own meaning get phrase pages, questions get
+answered on the relevant page), keeps synonym/phrase links two-way, and clears
+the processed items from the inbox. No agent? The **Add vocabulary word**
+command and the template cover the same ground by hand.
 
 ## Creating words
 
