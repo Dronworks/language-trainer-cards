@@ -16,8 +16,8 @@ The plugin is submitted to Obsidian's community list from **this** repository
 2. Add the matching entry to `versions.json`: `"<version>": "<minAppVersion>"`.
 3. Commit, then create and push a tag **identical to the version**:
    ```sh
-   git tag 0.1.0
-   git push origin 0.1.0
+   git tag 1.0.0
+   git push origin 1.0.0
    ```
    The `Release` workflow then publishes a GitHub release with `main.js`,
    `manifest.json`, and `styles.css` attached as assets.
